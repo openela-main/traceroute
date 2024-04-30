@@ -2,12 +2,13 @@ Summary: Traces the route taken by packets over an IPv4/IPv6 network
 Name: traceroute
 Epoch: 3
 Version: 2.1.0
-Release: 16%{?dist}
+Release: 18%{?dist}
 License: GPLv2+
 URL:  http://traceroute.sourceforge.net
 Source0: https://downloads.sourceforge.net/project/traceroute/traceroute/traceroute-%{version}/traceroute-%{version}.tar.gz
 
 Patch001: 001-review-of-CWE-170-CWE-772.patch
+Patch002: 002-traceroute-CVE-2023-46316.patch
 
 Provides: tcptraceroute = 1.5-1
 Obsoletes: tcptraceroute < 1.5-1
@@ -29,9 +30,7 @@ problems.
 
 
 %prep
-%setup -q
-
-%patch001 -p1
+%autosetup -p1
 
 
 %build
@@ -55,6 +54,12 @@ ln -s traceroute.8 $RPM_BUILD_ROOT%{_mandir}/man8/tcptraceroute.8
 
 
 %changelog
+* Mon Nov 27 2023 Jan Macku <jamacku@redhat.com> - 3:2.1.0-18
+- add gating.yaml
+
+* Mon Oct 30 2023 Jan Macku <jamacku@redhat.com> - 3:2.1.0-17
+- fix improper command line parsing (CVE-2023-46316)
+
 * Tue Aug 10 2021 Mohan Boddu <mboddu@redhat.com> - 3:2.1.0-16
 - Rebuilt for IMA sigs, glibc 2.34, aarch64 flags
   Related: rhbz#1991688
