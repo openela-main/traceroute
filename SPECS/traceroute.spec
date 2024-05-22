@@ -2,11 +2,13 @@ Summary: Traces the route taken by packets over an IPv4/IPv6 network
 Name: traceroute
 Epoch: 3
 Version: 2.1.0
-Release: 6%{?dist}
+Release: 8%{?dist}
 Group: Applications/Internet
 License: GPLv2+
 URL:  http://traceroute.sourceforge.net
 Source0: http://downloads.sourceforge.net/project/traceroute/traceroute/traceroute-%{version}/traceroute-%{version}.tar.gz
+
+Patch001: 001-traceroute-CVE-2023-46316.patch
 
 Provides: tcptraceroute = 1.5-1
 Obsoletes: tcptraceroute < 1.5-1
@@ -25,7 +27,7 @@ problems.
 
 
 %prep
-%setup -q
+%autosetup -p1
 
 
 %build
@@ -59,6 +61,12 @@ popd
 
 
 %changelog
+* Mon Nov 27 2023 Jan Macku <jamacku@redhat.com> - 3:2.1.0-8
+- add gating.yaml
+
+* Mon Oct 30 2023 Jan Macku <jamacku@redhat.com> - 3:2.1.0-7
+- fix improper command line parsing (CVE-2023-46316)
+
 * Fri Feb 09 2018 Fedora Release Engineering <releng@fedoraproject.org> - 3:2.1.0-6
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_28_Mass_Rebuild
 
