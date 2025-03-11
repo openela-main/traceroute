@@ -1,0 +1,44 @@
+diff --color -u -r traceroute-2.1.0/traceroute/poll.c traceroute-2.1.1/traceroute/poll.c
+--- traceroute-2.1.0/traceroute/poll.c	2016-03-07 17:20:56.000000000 +0100
++++ traceroute-2.1.1/traceroute/poll.c	2022-12-27 01:00:18.000000000 +0100
+@@ -64,28 +64,23 @@
+ 
+ 
+ void do_poll (double timeout, void (*callback) (int fd, int revents)) {
+-	int nfds;
+-	int msecs = ceil (timeout * 1000);
++	int nfds, n, i;
+ 
+-	while ((nfds = cleanup_polls ()) > 0) {
+-	    int i, n;
++	nfds = cleanup_polls ();
+ 
+-	    n = poll (pfd, nfds, msecs);
++	if (!nfds)  return;
+ 
+-	    if (n <= 0) {
+-		if (n == 0 || errno == EINTR)
+-			return;
+-		error ("poll");
+-	    }
++	n = poll (pfd, nfds, ceil(timeout * 1000));
++	if (n < 0) {
++	    if (errno == EINTR)  return;
++	    error ("poll");
++	}
+ 
+-	    for (i = 0; n && i < num_polls; i++) {
+-		if (pfd[i].revents) {
+-		    callback (pfd[i].fd, pfd[i].revents);
+-		    n--;
+-		}
++	for (i = 0; n && i < num_polls; i++) {
++	    if (pfd[i].revents) {
++		callback (pfd[i].fd, pfd[i].revents);
++		n--;
+ 	    }
+-
+-	    msecs = 0;	    /*  no more wait, just eat all the pending   */
+ 	}
+ 
+ 	return;

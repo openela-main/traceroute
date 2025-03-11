@@ -2,13 +2,14 @@ Summary: Traces the route taken by packets over an IPv4/IPv6 network
 Name: traceroute
 Epoch: 3
 Version: 2.1.0
-Release: 8%{?dist}
+Release: 9%{?dist}
 Group: Applications/Internet
 License: GPLv2+
 URL:  http://traceroute.sourceforge.net
 Source0: http://downloads.sourceforge.net/project/traceroute/traceroute/traceroute-%{version}/traceroute-%{version}.tar.gz
 
 Patch001: 001-traceroute-CVE-2023-46316.patch
+Patch002: 002-traceroute-2.1.1-return-back-more-robust.patch
 
 Provides: tcptraceroute = 1.5-1
 Obsoletes: tcptraceroute < 1.5-1
@@ -61,6 +62,9 @@ popd
 
 
 %changelog
+* Wed Dec 18 2024 Jan Macku <jamacku@redhat.com> - 3:2.1.0-9
+- avoid consuming 100% CPU when running traceroute in loop (RHEL-71510)
+
 * Mon Nov 27 2023 Jan Macku <jamacku@redhat.com> - 3:2.1.0-8
 - add gating.yaml
 
