@@ -1,0 +1,40 @@
+From 614edd1ad7e5d2ec2f5f6c43dc6cae05ac893f48 Mon Sep 17 00:00:00 2001
+From: Jan Macku <jamacku@redhat.com>
+Date: Wed, 18 Sep 2024 13:02:48 +0200
+Subject: [PATCH] make traceroute follow RFC-3484 conditionally
+
+RFC-3484 - Is defining rules for IPv6 address selection.
+https://www.rfc-editor.org/info/rfc3484
+
+This patch is adding option to allow traceroute to follow RFC-3484 for IPv6 address selection by setting the environment variable TRACEROUTE_USE_RFC3484.
+
+Modification of upstream patch released in 2.1.6 - upstream tracker https://sourceforge.net/p/traceroute/bugs/16/
+
+Resolves: RHEL-59444
+---
+ traceroute/traceroute.c | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+diff --git a/traceroute/traceroute.c b/traceroute/traceroute.c
+index 0a29e36..f755a24 100644
+--- a/traceroute/traceroute.c
++++ b/traceroute/traceroute.c
+@@ -210,10 +210,15 @@ static int getaddr (const char *name, sockaddr_any *addr) {
+ 	}
+ 
+ 	for (ai = res; ai; ai = ai->ai_next) {
++	  if (!getenv("TRACEROUTE_USE_RFC3484")) {
+ 	    if (ai->ai_family == af)  break;
+ 	    /*  when af not specified, choose DEF_AF if present   */
+ 	    if (!af && ai->ai_family == DEF_AF)
+ 		    break;
++	  } else {
++	    if (!af || ai->ai_family == af)
++		    break;
++	  }
+ 	}
+ 	if (!ai)  ai = res;	/*  anything...  */
+ 
+-- 
+2.46.0
+
